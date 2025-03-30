@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -47,6 +49,10 @@ public class UserService {
         user.setResidentId(resident.getId()); // Lấy ID sau khi lưu
         user.setName(request.getName());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        user.setDateCreated(LocalDateTime.now().format(formatter));
+        
         userRepository.save(user);
     }
     public void addUser(ManualUserDTO request) {
@@ -63,6 +69,10 @@ public class UserService {
         user.setName(request.getName());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(request.getRole());
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        user.setDateCreated(LocalDateTime.now().format(formatter));
+        
         userRepository.save(user);
     }
 
