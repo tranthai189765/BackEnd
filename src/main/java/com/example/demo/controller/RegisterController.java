@@ -48,7 +48,7 @@ public class RegisterController {
 
         Map<String, String> response = new HashMap<>();
         response.put("message", "User saved to session successfully!");
-        response.put("email", email);
+        response.put("email", request.getEmail());
 
         return ResponseEntity.ok(response);
     }
