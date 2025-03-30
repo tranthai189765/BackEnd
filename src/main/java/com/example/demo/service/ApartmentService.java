@@ -46,7 +46,7 @@ public class ApartmentService {
         apartment.setFloor(apartmentDTO.getFloor());
         apartment.setArea(apartmentDTO.getArea());
         // Lấy thời gian hiện tại và format theo DD/MM/YY
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         apartment.setDateCreated(LocalDateTime.now().format(formatter));
 
         apartmentRepository.save(apartment);
