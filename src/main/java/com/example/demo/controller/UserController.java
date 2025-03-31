@@ -52,17 +52,51 @@ public class UserController {
     }
 
 
+    
     @PostMapping("/change-password")
     public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordRequest request) {
         String result = userService.changePassword(request.getUserId(), request.getOldPassword(), request.getNewPassword());
-
         Map<String, String> response = new HashMap<>();
-        response.put("message", result);
 
-        if ("Password changed successfully".equals(result)) {
+        if ("success".equals(result)) {
+            response.put("message", result);
             return ResponseEntity.ok(response);
         } else {
+            response.put("error", result);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
+
+    // Định nghĩa class DTO để nhận request body
+    public static class ChangePasswordRequest {
+        private Long userId;
+        private String oldPassword;
+        private String newPassword;
+
+        // Getters và Setters
+        public Long getUserId() {
+            return userId;
+        }
+
+        public void setUserId(Long userId) {
+            this.userId = userId;
+        }
+
+        public String getOldPassword() {
+            return oldPassword;
+        }
+
+        public void setOldPassword(String oldPassword) {
+            this.oldPassword = oldPassword;
+        }
+
+        public String getNewPassword() {
+            return newPassword;
+        }
+
+        public void setNewPassword(String newPassword) {
+            this.newPassword = newPassword;
+        }
+    }
+
 }
