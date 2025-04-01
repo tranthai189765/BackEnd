@@ -69,14 +69,6 @@ public class OTPService {
     // Gửi OTP nếu username & email hợp lệ
     public boolean sendResetPasswordOTP(String username) {
 
-//        String attemptKey = "ATTEMPT_" + username;
-//        Integer attempts = redisTemplate.opsForValue().get(attemptKey) != null
-//                ? Integer.parseInt(redisTemplate.opsForValue().get(attemptKey))
-//                : 0;
-//
-//        if (attempts >= 3) {
-//            throw new RuntimeException("Bạn đã yêu cầu quá nhiều lần. Vui lòng thử lại sau 15 phút.");
-//        }
         String attemptKey = "ATTEMPT_" + username;
         Integer attempts = attemptOtpCache.getIfPresent(attemptKey);
         if (attempts == null) {
