@@ -22,8 +22,6 @@ public class ApartmentConfig {
     @PostConstruct
     @Transactional
     public void initApartments() {
-        // Kiểm tra xem đã có dữ liệu hay chưa
-    	apartmentRepository.deleteAll();
         if (apartmentRepository.count() > 0) {
             System.out.println("Apartments đã được khởi tạo trước đó.");
             return;
