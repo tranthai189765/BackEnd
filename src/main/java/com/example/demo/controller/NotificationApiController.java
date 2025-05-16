@@ -16,7 +16,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/notifications")
-@CrossOrigin(origins = "http://localhost:3000") // 🔁 Cho phép kết nối từ React
+@CrossOrigin
 public class NotificationApiController {
 
     @Autowired
