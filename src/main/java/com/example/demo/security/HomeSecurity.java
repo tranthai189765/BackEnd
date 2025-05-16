@@ -40,7 +40,7 @@ public class HomeSecurity {
     @Bean
     CorsConfigurationSource corsConfigurationSource() { // ✅ Khai báo corsConfigurationSource() ở đây
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000")); // ✅ Cho phép React truy cập
+        config.setAllowedOrigins(List.of("https://front-end-lyart-eight.vercel.app")); // ✅ Cho phép React truy cập
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
