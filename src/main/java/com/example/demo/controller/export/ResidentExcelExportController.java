@@ -18,8 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin/export")
-@PreAuthorize("hasRole('ADMIN')")
+@RequestMapping("/api/admin/export")
+@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class ResidentExcelExportController {
 
     @Autowired

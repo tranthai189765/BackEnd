@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.Apartment;
 import com.example.demo.entity.Resident;
 import com.example.demo.entity.User;
 import com.example.demo.enums.ApartmentStatus;
@@ -7,6 +8,7 @@ import com.example.demo.enums.ApartmentType;
 import com.example.demo.enums.ResidentStatus;
 import com.example.demo.repository.ResidentRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.ApartmentService;
 import com.example.demo.service.ResidentService;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +22,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/residents")
 public class ResidentController {
 
-    @Autowired
-    private ResidentRepository residentRepository;
+//    @Autowired
+//    private ResidentRepository residentRepository;
     
     @Autowired
     private UserService userService;
@@ -30,6 +32,23 @@ public class ResidentController {
     
     @Autowired
     private ResidentService residentService;
+    @Autowired
+    private ApartmentService apartmentService;
+
+    @PostMapping("/a5e324/update/apartment")
+    public void updateApartment() {
+        List<Resident> residents = residentService.findAll();
+        for (Resident resident : residents) {
+            for (String apartmentNumber : resident.getApartmentNumbers()) {
+                if (apartmentNumber != null && !apartmentNumber.isEmpty()) {
+                    Apartment apartment = apartmentService.getApartmentByNumber(apartmentNumber);
+                    apartment.getResidentIds().add(resident.getId());
+                    apartment.setStatus(ApartmentStatus.OCCUPIED);
+                    apartmentService.save(apartment);
+                }
+            }
+        }
+    }
 
     @GetMapping("/filter")
     public List<Resident> filterResidents(

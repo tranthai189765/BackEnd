@@ -5,10 +5,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class ExcelExportMenuController {
 
-    @GetMapping("/admin/export")
+    @GetMapping("/api/admin/export")
     public String showExportMenu() {
         return "admin/export/export-menu";
     }

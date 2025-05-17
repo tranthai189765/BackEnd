@@ -1,10 +1,12 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Apartment;
+import com.example.demo.entity.Resident;
 import com.example.demo.enums.ApartmentStatus;
 import com.example.demo.enums.ApartmentType;
 import com.example.demo.repository.ApartmentRepository;
 import com.example.demo.service.ApartmentService;
+import com.example.demo.service.ResidentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,9 +25,11 @@ public class ApartmentAPIController {
 
 //    @Autowired
 //    private ApartmentRepository apartmentRepository;
-    
+
     @Autowired
     private ApartmentService apartmentService;
+    @Autowired
+    private ResidentService residentService;
 
     @GetMapping("/list")
     public List<Map<String, Object>> getAllApartments() {
@@ -47,27 +51,27 @@ public class ApartmentAPIController {
             @RequestParam(value = "filterLogic", defaultValue = "AND") String filterLogic) {
 
         Map<String, Object> filterParams = new HashMap<>();
-        
+
         if (apartmentNumber != null && !apartmentNumber.isEmpty()) {
             filterParams.put("apartmentNumber", apartmentNumber);
         }
-        
+
         if (roomNumber != null && !roomNumber.isEmpty()) {
             filterParams.put("roomNumber", roomNumber);
         }
-        
+
         if (floor != null && !floor.isEmpty()) {
             filterParams.put("floors", parseMultipleValues(floor));
         }
-        
+
         if (minArea != null) {
             filterParams.put("minArea", minArea);
         }
-        
+
         if (maxArea != null) {
             filterParams.put("maxArea", maxArea);
         }
-        
+
         if (status != null && !status.isEmpty()) {
             List<ApartmentStatus> statusList = parseStatusValues(status);
             if (!statusList.isEmpty()) {
@@ -79,21 +83,21 @@ public class ApartmentAPIController {
             List<ApartmentType> typeList = parseTypeValues(type);
             filterParams.put("type", typeList);
         }
-        
+
         filterParams.put("filterLogic", filterLogic);
-        
+
         List<Apartment> apartments = apartmentService.filterApartments(filterParams);
-        
+
         return apartments.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
-    
+
     private List<Integer> parseMultipleValues(String values) {
         if (values == null || values.isEmpty()) {
             return new ArrayList<>();
         }
-        
+
         return Arrays.stream(values.split("\\|"))
                 .filter(s -> !s.isEmpty())
                 .map(s -> {
@@ -106,12 +110,12 @@ public class ApartmentAPIController {
                 .filter(value -> value != null)
                 .collect(Collectors.toList());
     }
-    
+
     private List<ApartmentStatus> parseStatusValues(String status) {
         if (status == null || status.isEmpty()) {
             return new ArrayList<>();
         }
-        
+
         return Arrays.stream(status.split("\\|"))
                 .filter(s -> !s.isEmpty())
                 .map(s -> {
@@ -152,7 +156,18 @@ public class ApartmentAPIController {
         dto.put("area", apartment.getArea());
         dto.put("status", apartment.getStatus().name());
         dto.put("type", apartment.getType().name());
-        
+        List<String> residentName = new ArrayList<>();
+        if (apartment.getResidentIds() != null && !apartment.getResidentIds().isEmpty()) {
+            for (Long id : apartment.getResidentIds()) {
+                Resident resident = residentService.findById(id);
+                if (resident != null) {
+                    residentName.add(resident.getFullName());
+                }
+            }
+        }
+        String residentNameStr = String.join(", ", residentName);
+        dto.put("residentName", residentNameStr);
+
         return dto;
     }
 
@@ -166,35 +181,35 @@ public class ApartmentAPIController {
     }
 
     @PostMapping("/batch-update-status")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<?> batchUpdateStatus(@RequestBody Map<String, Object> request) {
         try {
             @SuppressWarnings("unchecked")
             List<Long> ids = (List<Long>) request.get("ids");
             String status = (String) request.get("status");
-            
+
             if (ids == null || ids.isEmpty()) {
                 return ResponseEntity.badRequest().body("Danh sách ID căn hộ không được trống");
             }
-            
+
             if (status == null || status.isEmpty()) {
                 return ResponseEntity.badRequest().body("Trạng thái không được trống");
             }
-            
+
             ApartmentStatus apartmentStatus;
             try {
                 apartmentStatus = ApartmentStatus.valueOf(status);
             } catch (IllegalArgumentException e) {
                 return ResponseEntity.badRequest().body("Trạng thái không hợp lệ");
             }
-            
+
             List<Apartment> apartments = apartmentService.findAllById(ids);
             for (Apartment apartment : apartments) {
                 apartment.setStatus(apartmentStatus);
             }
-            
+
             apartmentService.save(apartments);
-            
+
             return ResponseEntity.ok(Map.of(
                 "success", true,
                 "message", "Đã cập nhật trạng thái cho " + apartments.size() + " căn hộ",

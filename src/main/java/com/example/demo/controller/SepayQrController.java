@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.service.BillService;
+import com.example.demo.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,16 +18,26 @@ public class SepayQrController {
 
     @Autowired
     private BillRepository billRepository;
+    @Autowired
+    private BillService billService;
+    @Autowired
+    private InvoiceService invoiceService;
 
     @GetMapping("/{billId}")
     public ResponseEntity<?> getQrCodeUrl(@PathVariable Long billId) {
         return billRepository.findById(billId)
             .map(bill -> {
-                String qrCodeUrl = sepayQrService.generateQrCodeUrl(bill);
+                String qrCodeUrl = sepayQrService.generateQrCodeUrl(bill, false);
                 return ResponseEntity.ok().body(new QrCodeResponse(qrCodeUrl, bill.getPaymentReferenceCode()));
             })
             .orElse(ResponseEntity.notFound().build());
     }
+//
+//    @GetMapping("/regenerate/godMode")
+//    public void regenerateQrAllCode() {
+//        billService.regenerateAllQrCode();
+//        invoiceService.regenerateAllQrCode();
+//    }
 
     // Cập nhật response class:
     public static class QrCodeResponse {

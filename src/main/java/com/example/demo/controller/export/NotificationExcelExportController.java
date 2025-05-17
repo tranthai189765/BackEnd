@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin/export")
-@PreAuthorize("hasRole('ADMIN')")
+@RequestMapping("/api/admin/export")
+@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class NotificationExcelExportController {
 
     @Autowired
@@ -54,11 +54,11 @@ public class NotificationExcelExportController {
         for (Notification notification : notifications) {
             List<Object> rowData = new ArrayList<>();
             rowData.add(notification.getId());
-            
+
             Resident resident = notification.getResident();
             String residentName = resident != null ? resident.getFullName() : "Không xác định";
             rowData.add(residentName);
-            
+
             rowData.add(notification.getMessage());
             rowData.add(notification.isRead() ? "Đã đọc" : "Chưa đọc");
             rowData.add(notification.getCreatedAt());

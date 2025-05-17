@@ -190,7 +190,10 @@ public class ContributionService {
         Contribution savedContribution = contributionRepository.save(contribution);
         return convertToDTO(savedContribution);
     }
-
+    public Contribution updateContribution(Long id, Contribution contribution) {
+        contribution.setId(id);
+        return contributionRepository.save(contribution);
+    }
     @Transactional
     public void closeContribution(Long id) {
         Contribution contribution = contributionRepository.findById(id)
@@ -396,7 +399,7 @@ public class ContributionService {
         residentContribution.setContributionId(contribution.getId());
         residentContribution.setResidentId(resident.getId());
         residentContribution.setApartmentNumber(apartment.getApartmentNumber());
-        residentContribution.setAmount(amount);
+        residentContribution.setAmount(amount.longValue());
         residentContribution.setNote("Khoản đóng góp: " + contribution.getTitle());
         residentContribution.setPaymentStatus(PaymentStatus.UNPAID);
         residentContribution.setCreatedAt(LocalDateTime.now());
@@ -407,7 +410,7 @@ public class ContributionService {
         invoice.setInvoiceNumber("INV-" + UUID.randomUUID().toString().substring(0, 8));
         invoice.setApartmentNumber(apartment.getApartmentNumber());
         invoice.setResidentName(resident.getFullName());
-        invoice.setTotalAmount(amount);
+        invoice.setTotalAmount(amount.longValue());
         invoice.setDescription("Đóng góp: " + contribution.getTitle());
         invoice.setStatus(InvoiceStatus.UNPAID);
         invoice.setCreatedAt(LocalDateTime.now());
@@ -416,7 +419,7 @@ public class ContributionService {
         
         Invoice savedInvoice = invoiceRepository.save(invoice);
         
-        String qrCodeUrl = sepayQrService.generateQrCodeUrl(savedInvoice);
+        String qrCodeUrl = sepayQrService.generateQrCodeUrl(savedInvoice, false);
         savedInvoice.setQrCodeUrl(qrCodeUrl);
         invoiceRepository.save(savedInvoice);
         

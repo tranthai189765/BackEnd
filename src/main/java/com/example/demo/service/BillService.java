@@ -194,7 +194,7 @@ public class BillService {
         bill.setPaymentReferenceCode(sepayQrService.generateReferenceCode(bill));
         
         try {
-            String qrCodeUrl = sepayQrService.generateQrCodeUrl(bill);
+            String qrCodeUrl = sepayQrService.generateQrCodeUrl(bill, false);
             bill.setQrCodeUrl(qrCodeUrl);
             billRepository.save(bill);
         } catch (Exception e) {
@@ -244,7 +244,7 @@ public class BillService {
         // Gán mã tham chiếu và tạo mã QR
         bill.setPaymentReferenceCode(sepayQrService.generateReferenceCode(bill));
         try {
-            String qrCodeUrl = sepayQrService.generateQrCodeUrl(bill);
+            String qrCodeUrl = sepayQrService.generateQrCodeUrl(bill, false);
             bill.setQrCodeUrl(qrCodeUrl);
             billRepository.save(bill);
         } catch (Exception e) {
@@ -285,7 +285,7 @@ public class BillService {
         // Gán mã tham chiếu và tạo mã QR
         bill.setPaymentReferenceCode(sepayQrService.generateReferenceCode(bill));
         try {
-            String qrCodeUrl = sepayQrService.generateQrCodeUrl(bill);
+            String qrCodeUrl = sepayQrService.generateQrCodeUrl(bill, false);
             bill.setQrCodeUrl(qrCodeUrl);
             billRepository.save(bill);
         } catch (Exception e) {
@@ -398,7 +398,7 @@ public class BillService {
         try {
             bill.setPaymentReferenceCode(sepayQrService.generateReferenceCode(bill));
             
-            String qrCodeUrl = sepayQrService.generateQrCodeUrl(bill);
+            String qrCodeUrl = sepayQrService.generateQrCodeUrl(bill, false);
             bill.setQrCodeUrl(qrCodeUrl);
             bill.setPaymentError(null);
             billRepository.save(bill);
@@ -410,7 +410,15 @@ public class BillService {
         
         return bill;
     }
-    
+
+    public void regenerateAllQrCode() {
+        List<Bill> bills = billRepository.findAll();
+        for (Bill bill : bills) {
+            String qrCode = sepayQrService.generateQrCodeUrl(bill, true);
+            bill.setQrCodeUrl(qrCode);
+            billRepository.save(bill);
+        }
+    }
 
     public void sendPaymentConfirmation(Bill bill) {
         Apartment apartment = apartmentRepository.findByApartmentNumber(bill.getApartmentNumber());

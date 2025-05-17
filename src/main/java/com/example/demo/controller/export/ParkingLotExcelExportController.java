@@ -18,8 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin/export")
-@PreAuthorize("hasRole('ADMIN')")
+@RequestMapping("/api/admin/export")
+@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class ParkingLotExcelExportController {
 
     @Autowired
@@ -69,7 +69,7 @@ public class ParkingLotExcelExportController {
 
     private String formatParkingType(String type) {
         if (type == null) return "";
-        
+
         switch (type) {
             case "CAR":
                 return "Ô tô";
@@ -82,7 +82,7 @@ public class ParkingLotExcelExportController {
 
     private String formatParkingLotStatus(String status) {
         if (status == null) return "";
-        
+
         switch (status) {
             case "AVAILABLE":
                 return "Còn trống";

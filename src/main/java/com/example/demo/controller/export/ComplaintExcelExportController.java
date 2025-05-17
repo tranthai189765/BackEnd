@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin/export")
-@PreAuthorize("hasRole('ADMIN')")
+@RequestMapping("/api/admin/export")
+@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class ComplaintExcelExportController {
 
     @Autowired
@@ -57,11 +57,11 @@ public class ComplaintExcelExportController {
             rowData.add(complaint.getContent());
             rowData.add(complaint.getType());
             rowData.add(complaint.getCreatedAt());
-            
+
             Resident resident = complaint.getResident();
             String residentName = resident != null ? resident.getFullName() : "Không xác định";
             rowData.add(residentName);
-            
+
             String status = complaint.getStatus() != null ? complaint.getStatus().getDisplayName() : "Không xác định";
             rowData.add(status);
 

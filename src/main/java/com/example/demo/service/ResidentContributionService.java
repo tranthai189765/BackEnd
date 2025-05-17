@@ -109,7 +109,7 @@ public class ResidentContributionService {
         }
         
         Invoice invoice = new Invoice();
-        invoice.setInvoiceNumber("INV-" + UUID.randomUUID().toString().substring(0, 8));
+        invoice.setInvoiceNumber("INV" + UUID.randomUUID().toString().substring(0, 8));
         invoice.setApartmentNumber(dto.getApartmentNumber());
         invoice.setResidentName(residentName);
         invoice.setTotalAmount(dto.getAmount());
@@ -121,7 +121,7 @@ public class ResidentContributionService {
         
         Invoice savedInvoice = invoiceRepository.save(invoice);
         
-        String qrCode = sepayQrService.generateQrCodeUrl(savedInvoice);
+        String qrCode = sepayQrService.generateQrCodeUrl(savedInvoice, false);
         savedInvoice.setQrCodeUrl(qrCode);
         invoiceRepository.save(savedInvoice);
         
@@ -183,5 +183,12 @@ public class ResidentContributionService {
         }
 
         return dto;
+    }
+
+    public List<ResidentContributionDTO> getAllContributions() {
+        List<ResidentContribution> contributions = residentContributionRepository.findAll();
+        return contributions.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 } 

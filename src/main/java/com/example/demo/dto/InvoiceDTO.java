@@ -19,8 +19,9 @@ public class InvoiceDTO {
     private String apartmentNumber;
     private String residentName;
     private LocalDateTime createdAt;
-    private Double totalAmount;
+    private Long totalAmount;
     private String qrCodeUrl;
+    private String description;
     private String paymentReferenceCode;
     private InvoiceStatus status;
     private LocalDate dueDate;

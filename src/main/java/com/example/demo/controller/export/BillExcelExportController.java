@@ -19,8 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin/export")
-@PreAuthorize("hasRole('ADMIN')")
+@RequestMapping("/api/admin/export")
+@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class BillExcelExportController {
 
     @Autowired
@@ -76,7 +76,7 @@ public class BillExcelExportController {
 
     private String formatBillType(String type) {
         if (type == null) return "";
-        
+
         switch (type) {
             case "ELECTRICITY":
                 return "Điện";
@@ -97,7 +97,7 @@ public class BillExcelExportController {
 
     private String formatBillStatus(String status) {
         if (status == null) return "";
-        
+
         switch (status) {
             case "UNPAID":
                 return "Chưa thanh toán";

@@ -12,6 +12,7 @@ import com.example.demo.enums.BillStatus;
 import com.example.demo.enums.BillType;
 import com.example.demo.repository.ApartmentRepository;
 import com.example.demo.repository.BillRepository;
+import com.example.demo.repository.ResidentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,8 @@ public class ApartmentService {
     private BillService billService;
     @Autowired
     private ApartmentFeeUnitService apartmentFeeUnitService;
+    @Autowired
+    private ResidentRepository residentRepository;
 
     // Lấy danh sách tất cả các căn hộ
     public List<Apartment> getAllApartments() {
@@ -46,6 +49,9 @@ public class ApartmentService {
     // Lấy thông tin căn hộ theo ID
     public Optional<Apartment> getApartmentById(Long id) {
         return apartmentRepository.findById(id);
+    }
+    public Apartment save(Apartment apartment) {
+        return apartmentRepository.save(apartment);
     }
     public List<Apartment> save(List<Apartment> apartment) {
         return apartmentRepository.saveAll(apartment);
@@ -155,6 +161,7 @@ public class ApartmentService {
         if (addedApartments != null && !addedApartments.isEmpty()) {
             updateResident(addedApartments, resident);
         }
+//        residentRepository.save(resident);
     }
 
     public void deleteResident(Resident resident) {

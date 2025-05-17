@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin/export")
-@PreAuthorize("hasRole('ADMIN')")
+@RequestMapping("/api/admin/export")
+@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class ParkingRentalExcelExportController {
 
     @Autowired
@@ -53,19 +53,19 @@ public class ParkingRentalExcelExportController {
         for (ParkingRental parkingRental : parkingRentals) {
             List<Object> rowData = new ArrayList<>();
             rowData.add(parkingRental.getId());
-            
+
             Apartment apartment = parkingRental.getApartment();
             String apartmentNumber = apartment != null ? apartment.getApartmentNumber() : "Không xác định";
             rowData.add(apartmentNumber);
-            
+
             ParkingLot parkingLot = parkingRental.getParkingLot();
             String lotCode = parkingLot != null ? parkingLot.getLotCode() : "Không xác định";
             rowData.add(lotCode);
-            
+
             String vehicleType = parkingLot != null && parkingLot.getType() != null ? 
                     formatVehicleType(parkingLot.getType().name()) : "Không xác định";
             rowData.add(vehicleType);
-            
+
             rowData.add(parkingRental.getStartDate());
             rowData.add(parkingRental.getEndDate());
 
@@ -79,10 +79,10 @@ public class ParkingRentalExcelExportController {
         workbook.write(response.getOutputStream());
         workbook.close();
     }
-    
+
     private String formatVehicleType(String type) {
         if (type == null) return "Không xác định";
-        
+
         switch (type) {
             case "CAR":
                 return "Ô tô";

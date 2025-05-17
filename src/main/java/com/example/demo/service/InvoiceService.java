@@ -106,15 +106,22 @@ public class InvoiceService {
         List<Bill> unpaidBills = bills.stream()
                 .filter(bill -> !bill.isPaid())
                 .collect(Collectors.toList());
+        // filter invoice_id = null
+        unpaidBills = unpaidBills.stream()
+                .filter(bill -> bill.getInvoiceId() == null)
+                .collect(Collectors.toList());
                 
         if (unpaidBills.size() != bills.size()) {
             throw new RuntimeException("Có " + (bills.size() - unpaidBills.size()) + 
-                                      " hóa đơn đã được thanh toán trước đó");
+                                      " hóa đơn đã được thanh toán trước đó hoặc đang nằm trong một hóa đơn tổng hợp");
         }
-        
-        double totalAmount = bills.stream()
+
+        // set invoice_id for bills
+
+
+        Long totalAmount = (long)(bills.stream()
                 .mapToDouble(Bill::getAmount)
-                .sum();
+                .sum());
         
         LocalDate earliestDueDate = bills.stream()
                 .map(Bill::getDueDate)
@@ -123,6 +130,7 @@ public class InvoiceService {
                 .orElse(null);
         
         Invoice invoice = new Invoice();
+
         invoice.setInvoiceNumber(generateInvoiceNumber(apartmentNumber));
         invoice.setApartmentNumber(apartmentNumber);
         invoice.setResidentName(residentName);
@@ -131,15 +139,32 @@ public class InvoiceService {
         invoice.setStatus(InvoiceStatus.UNPAID);
         invoice.setBillIds(billIds);
         invoice.setDueDate(earliestDueDate);
-        
-        invoice.setPaymentReferenceCode(sepayQrService.generateInvoiceReferenceCode(invoice));
-        invoice.setQrCodeUrl(sepayQrService.generateQrCodeUrl(invoice));
-        
+
+
+
+        System.err.println(invoice.getId());
         invoice = invoiceRepository.save(invoice);
-        
+        System.err.println(invoice.getId());
+        for (Bill bill : bills) {
+            bill.setInvoiceId(invoice.getId());
+            billRepository.save(bill);
+        }
+        invoice.setDescription("Hóa đơn " + apartmentNumber + " " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+        invoice.setPaymentReferenceCode(sepayQrService.generateInvoiceReferenceCode(invoice));
+        invoice.setQrCodeUrl(sepayQrService.generateQrCodeUrl(invoice, false));
+//        invoice = invoiceRepository.save(invoice);
         sendInvoiceNotification(invoice, new ArrayList<>(apartment.getResidentIds()));
         
         return invoice;
+    }
+
+    public void regenerateAllQrCode() {
+        List<Invoice> invoices = invoiceRepository.findAll();
+        for (Invoice invoice : invoices) {
+            String qrCodeUrl = sepayQrService.generateQrCodeUrl(invoice, false);
+            invoice.setQrCodeUrl(qrCodeUrl);
+            invoiceRepository.save(invoice);
+        }
     }
     
     public ByteArrayOutputStream generateInvoiceDocument(Long invoiceId) {
@@ -348,6 +373,7 @@ public class InvoiceService {
         dto.setResidentName(invoice.getResidentName());
         dto.setCreatedAt(invoice.getCreatedAt());
         dto.setTotalAmount(invoice.getTotalAmount());
+        dto.setDescription(invoice.getDescription());
         dto.setQrCodeUrl(invoice.getQrCodeUrl());
         dto.setPaymentReferenceCode(invoice.getPaymentReferenceCode());
         dto.setStatus(invoice.getStatus());

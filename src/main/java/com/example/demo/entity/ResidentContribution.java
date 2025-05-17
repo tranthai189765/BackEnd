@@ -28,7 +28,7 @@ public class ResidentContribution {
     private String apartmentNumber;
 
     @Column(name = "amount", nullable = false)
-    private Double amount;
+    private Long amount;
 
     @Column(name = "note", length = 1000)
     private String note;

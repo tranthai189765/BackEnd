@@ -20,7 +20,7 @@ public class ResidentContributionDTO {
     
     @NotNull(message = "Số tiền không được để trống")
     @Min(value = 0, message = "Số tiền không được âm")
-    private Double amount;
+    private Long amount;
     
     private String note;
     private String qrCode;
