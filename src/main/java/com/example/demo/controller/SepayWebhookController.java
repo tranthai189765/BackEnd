@@ -55,11 +55,11 @@ public class SepayWebhookController {
             String clientIp = request.getRemoteAddr();
 
 //             if (!"103.255.238.9".equals(clientIp)) {
-            if (!sepayConfig.getIpAllow().equals(clientIp)) {
-                // if (!"127.0.0.1".equals(clientIp) && !"0:0:0:0:0:0:0:1".equals(clientIp)) {
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("success", false, "message", "Unauthorized IP"));
-                // }
-            }
+//            if (!sepayConfig.getIpAllow().equals(clientIp)) {
+//                // if (!"127.0.0.1".equals(clientIp) && !"0:0:0:0:0:0:0:1".equals(clientIp)) {
+//                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("success", false, "message", "Unauthorized IP"));
+//                // }
+//            }
 //            System.err.println(authHeader);
             if (authHeader != null && authHeader.startsWith("Apikey ")) {
                 String apiKey = authHeader.substring(7);
