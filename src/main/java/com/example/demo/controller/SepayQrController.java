@@ -32,6 +32,37 @@ public class SepayQrController {
             })
             .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/regenerate/{billId}")
+    public ResponseEntity<?> regenerateQrCode(@PathVariable Long billId) {
+        return billRepository.findById(billId)
+            .map(bill -> {
+                String qrCodeUrl = sepayQrService.generateQrCodeUrl(bill, true);
+                return ResponseEntity.ok().body(new QrCodeResponse(qrCodeUrl, bill.getPaymentReferenceCode()));
+            })
+            .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/invoice/regenerate/{invoiceId}")
+    public ResponseEntity<?> regenerateInvoiceQrCode(@PathVariable Long invoiceId) {
+        return billRepository.findById(invoiceId)
+            .map(invoice -> {
+                String qrCodeUrl = sepayQrService.generateQrCodeUrl(invoice, true);
+                return ResponseEntity.ok().body(new QrCodeResponse(qrCodeUrl, invoice.getPaymentReferenceCode()));
+            })
+            .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/invoice/{invoiceId}")
+    public ResponseEntity<?> getInvoiceQrCodeUrl(@PathVariable Long invoiceId) {
+        return billRepository.findById(invoiceId)
+            .map(invoice -> {
+                String qrCodeUrl = sepayQrService.generateQrCodeUrl(invoice, false);
+                return ResponseEntity.ok().body(new QrCodeResponse(qrCodeUrl, invoice.getPaymentReferenceCode()));
+            })
+            .orElse(ResponseEntity.notFound().build());
+    }
+
 //
 //    @GetMapping("/regenerate/godMode")
 //    public void regenerateQrAllCode() {

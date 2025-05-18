@@ -33,6 +33,7 @@ public class HomeSecurity {
                     .requestMatchers("/api/contribution-types/admin/**").hasAuthority("ROLE_ADMIN")
                     .requestMatchers("/api/contributions/**").permitAll()
                     .requestMatchers("/api/contributions/admin/**").hasAuthority("ROLE_ADMIN")
+                    .requestMatchers("/api/webhook/sepay").permitAll()
                 .anyRequest().authenticated()
 
             )

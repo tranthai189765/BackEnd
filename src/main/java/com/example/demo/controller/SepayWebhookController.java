@@ -54,13 +54,13 @@ public class SepayWebhookController {
         try {
             String clientIp = request.getRemoteAddr();
 
-            // if (!"103.255.238.9".equals(clientIp)) {
+//             if (!"103.255.238.9".equals(clientIp)) {
             if (!sepayConfig.getIpAllow().equals(clientIp)) {
                 // if (!"127.0.0.1".equals(clientIp) && !"0:0:0:0:0:0:0:1".equals(clientIp)) {
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("success", false, "message", "Unauthorized IP"));
                 // }
             }
-            
+//            System.err.println(authHeader);
             if (authHeader != null && authHeader.startsWith("Apikey ")) {
                 String apiKey = authHeader.substring(7);
                 if (!apiKey.equals(sepayConfig.getApiToken())) {
@@ -79,7 +79,7 @@ public class SepayWebhookController {
             String description = webhookData.path("description").asText();
             String transferType = webhookData.path("transferType").asText();
             double transferAmount = webhookData.path("transferAmount").asDouble();
-            
+
             if (!"in".equals(transferType)) {
                 return ResponseEntity.status(HttpStatus.OK).body(Map.of(
                     "success", true, 
@@ -95,8 +95,15 @@ public class SepayWebhookController {
             if (billReferenceCode != null) {
                 List<Bill> bills = billService.findByPaymentReferenceCode(billReferenceCode);
                 
-                if (!bills.isEmpty()) {
+                if (bills != null && !bills.isEmpty()) {
                     Bill bill = bills.get(0);
+
+                    if (bill.getAmount() != transferAmount) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                            "success", false,
+                            "message", "Payment amount does not match the bill amount"
+                        ));
+                    }
                     
                     bill.setStatus(BillStatus.PAID);
                     bill.setPaymentError(null);

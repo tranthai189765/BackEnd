@@ -96,7 +96,6 @@ public class UtilityBillBatchController {
                                 electricityFeePerKWh,
                                 electricityBill.getAmount()));
                         electricityBill.setCreatedAt(LocalDateTime.now());
-                        sepayQrService.generateQrCodeUrl(electricityBill, false);
                         newBills.add(electricityBill);
                     }
                     
@@ -115,13 +114,16 @@ public class UtilityBillBatchController {
                                 waterFeePerM3,
                                 waterBill.getAmount()));
                         waterBill.setCreatedAt(LocalDateTime.now());
-                        sepayQrService.generateQrCodeUrl(waterBill, false);
                         newBills.add(waterBill);
                     }
                 }
             }
             
-            billService.saveAll(newBills);
+            newBills = billService.saveAll(newBills);
+            for (Bill bill : newBills) {
+                bill.setPaymentReferenceCode(sepayQrService.generateQrCodeUrl(bill, true));
+                billService.save(bill);
+            }
 
             for (Bill bill : newBills) {
                 Apartment apartment = apartmentService.findByApartmentNumber(bill.getApartmentNumber());

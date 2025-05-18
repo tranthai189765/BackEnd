@@ -562,7 +562,7 @@ public class BillService {
         return billRepository.findByPaymentReferenceCode(billReferenceCode);
     }
 
-    public void saveAll(List<Bill> bills) {
-        billRepository.saveAll(bills);
+    public List<Bill> saveAll(List<Bill> bills) {
+        return billRepository.saveAll(bills);
     }
 }
