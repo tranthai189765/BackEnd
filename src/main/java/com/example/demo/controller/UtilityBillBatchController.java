@@ -88,13 +88,13 @@ public class UtilityBillBatchController {
                         electricityBill.setAmount(electricity * electricityFeePerKWh);
                         electricityBill.setStatus(BillStatus.UNPAID);
                         electricityBill.setDueDate(dueDate);
-                        electricityBill.setDescription(String.format("Tiền điện tháng %d/%d chung cư số %s: %.2f kWh x %,d VND = %.2f VND",
+                        electricityBill.setDescription(String.format("Tiền điện tháng %d %d chung cư số %s", //: %.2f kWh x %,d VND = %.2f VND",
                                 LocalDate.now().getMonthValue(),
                                 LocalDate.now().getYear(),
-                                apartmentNumber,
-                                electricity,
-                                electricityFeePerKWh,
-                                electricityBill.getAmount()));
+                                apartmentNumber));
+//                                electricity,
+//                                electricityFeePerKWh,
+//                                electricityBill.getAmount()));
                         electricityBill.setCreatedAt(LocalDateTime.now());
                         newBills.add(electricityBill);
                     }
@@ -106,13 +106,13 @@ public class UtilityBillBatchController {
                         waterBill.setAmount(water * waterFeePerM3);
                         waterBill.setStatus(BillStatus.UNPAID);
                         waterBill.setDueDate(dueDate);
-                        waterBill.setDescription(String.format("Tiền nước tháng %d/%d chung cư số %s: %.2f m³ x %,d VND = %.2f VND",
+                        waterBill.setDescription(String.format("Tiền nước tháng %d %d chung cư số %s", //: %.2f m³ x %,d VND = %.2f VND",
                                 LocalDate.now().getMonthValue(),
                                 LocalDate.now().getYear(),
-                                apartmentNumber,
-                                water,
-                                waterFeePerM3,
-                                waterBill.getAmount()));
+                                apartmentNumber));
+//                                water,
+//                                waterFeePerM3,
+//                                waterBill.getAmount()));
                         waterBill.setCreatedAt(LocalDateTime.now());
                         newBills.add(waterBill);
                     }
@@ -131,7 +131,7 @@ public class UtilityBillBatchController {
                 apartmentService.save(apartment);
                 if (apartment != null && apartment.getResidentIds() != null) {
                     for (Long residentId : apartment.getResidentIds()) {
-                        notificationService.createNotification(residentId, "Hoá đơn mới: " + bill.getDescription(),
+                        notificationService.createNotification(residentId, "Hoá đơn mới: " + bill.getDescription() + " - " + bill.getAmount() + " VND",
                                 "Bill: " + bill.getDescription(),
                                 "/bills/" + bill.getId() + "/payment");
                     }
