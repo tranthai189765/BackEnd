@@ -25,7 +25,7 @@ public class SepayQrController {
 
     @GetMapping("/{billId}")
     public ResponseEntity<?> getQrCodeUrl(@PathVariable Long billId) {
-        return billRepository.findById(billId)
+        return billService.findById(billId)
             .map(bill -> {
                 String qrCodeUrl = sepayQrService.generateQrCodeUrl(bill, false);
                 return ResponseEntity.ok().body(new QrCodeResponse(qrCodeUrl, bill.getPaymentReferenceCode()));
@@ -35,7 +35,7 @@ public class SepayQrController {
 
     @GetMapping("/regenerate/{billId}")
     public ResponseEntity<?> regenerateQrCode(@PathVariable Long billId) {
-        return billRepository.findById(billId)
+        return billService.findById(billId)
             .map(bill -> {
                 String qrCodeUrl = sepayQrService.generateQrCodeUrl(bill, true);
                 return ResponseEntity.ok().body(new QrCodeResponse(qrCodeUrl, bill.getPaymentReferenceCode()));
@@ -45,7 +45,7 @@ public class SepayQrController {
 
     @GetMapping("/invoice/regenerate/{invoiceId}")
     public ResponseEntity<?> regenerateInvoiceQrCode(@PathVariable Long invoiceId) {
-        return billRepository.findById(invoiceId)
+        return invoiceService.findById(invoiceId)
             .map(invoice -> {
                 String qrCodeUrl = sepayQrService.generateQrCodeUrl(invoice, true);
                 return ResponseEntity.ok().body(new QrCodeResponse(qrCodeUrl, invoice.getPaymentReferenceCode()));
@@ -55,7 +55,7 @@ public class SepayQrController {
 
     @GetMapping("/invoice/{invoiceId}")
     public ResponseEntity<?> getInvoiceQrCodeUrl(@PathVariable Long invoiceId) {
-        return billRepository.findById(invoiceId)
+        return invoiceService.findById(invoiceId)
             .map(invoice -> {
                 String qrCodeUrl = sepayQrService.generateQrCodeUrl(invoice, false);
                 return ResponseEntity.ok().body(new QrCodeResponse(qrCodeUrl, invoice.getPaymentReferenceCode()));

@@ -4,11 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.example.demo.entity.*;
@@ -331,6 +327,9 @@ public class BillService {
 
     public Set<Bill> findByIdIn(Set<Long> billIds) {
         return billRepository.findByIdIn(billIds);
+    }
+    public Optional<Bill> findById(Long id) {
+        return billRepository.findById(id);
     }
 
     private void sendBillNotification(BillDTO billDTO) {
