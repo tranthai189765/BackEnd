@@ -115,10 +115,10 @@ public class InvoiceService {
 
         // set invoice_id for bills
 
-
         Long totalAmount = (long)(bills.stream()
                 .mapToDouble(Bill::getAmount)
                 .sum());
+        System.err.println(totalAmount);
         
         LocalDate earliestDueDate = bills.stream()
                 .map(Bill::getDueDate)
@@ -136,8 +136,6 @@ public class InvoiceService {
         invoice.setStatus(InvoiceStatus.UNPAID);
         invoice.setBillIds(billIds);
         invoice.setDueDate(earliestDueDate);
-
-
 
         System.err.println(invoice.getId());
         invoice = invoiceRepository.save(invoice);
@@ -329,7 +327,7 @@ public class InvoiceService {
         List<Resident> residents = residentRepository.findAllById(residentIds);
         
         String notificationMessage = String.format(
-                "Hóa đơn tổng hợp mới cho căn hộ %s. Số tiền: %,.0f VNĐ. Vui lòng thanh toán.",
+                "Hóa đơn tổng hợp mới cho căn hộ %s. Số tiền: %d VNĐ. Vui lòng thanh toán.",
                 invoice.getApartmentNumber(),
                 invoice.getTotalAmount()
         );
